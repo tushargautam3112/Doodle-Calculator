@@ -8,10 +8,73 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 15px 20px;
-  border-radius: 0 0 15px 15px;
-  box-shadow: rgba(0, 0, 0, 0.084) 0px 10px 20px 5px;
+  display: flex;
+  gap: 10px;
+  border-radius: 15px 15px;
+  box-shadow: rgba(0, 0, 0, 0.084) 0px 5px 20px 5px;
+  border: 3px solid black;
 }
 
 button{
   width: 80px;
 }
+
+.latex-content{
+  position: absolute;
+  top: 0%;
+  transform: translate(-50%);
+  padding: 10px 20px;
+  max-width: 90vw;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.084) 0px 10px 20px 5px;
+  font-family: monospace;
+  border-radius: 15px;
+  border: 3px solid black;
+}
+.slider{
+  width: 100px;
+}
+
+/* useEffect(() => {
+  const canvas = canvasRef.current;
+  if (canvas) {
+      const ctx = canvas.getContext('2d');
+      const resizeCanvas = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          if (ctx) {
+              ctx.lineCap = 'round';
+              ctx.lineWidth = 3;
+              ctx.fillStyle = '#ecc';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+      };
+
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.async = true;
+
+      script.onload = () => {
+          if (window.MathJax) {
+              window.MathJax.Hub.Config({
+                  tex2jax: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+              });
+              console.log('MathJax loaded and configured');
+          }
+      };
+
+      script.onerror = () => {
+          console.error('Failed to load MathJax script');
+      };
+
+      document.head.appendChild(script);
+
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      return () => {
+          window.removeEventListener('resize', resizeCanvas);
+          document.head.removeChild(script);
+      };
+  }
+}, []); */

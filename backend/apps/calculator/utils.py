@@ -11,6 +11,7 @@ def analyze_image(img: Image, dict_of_vars: dict):
     dict_of_vars_str = json.dumps(dict_of_vars, ensure_ascii=False)
     prompt = (
          f"You have been given an image with some mathematical expressions, equations, or graphical problems, and you need to solve them. "
+         f"DO NOT USE BACKTICKS OR MARKDOWN FORMATTING. "
         f"Note: Use the PEMDAS rule for solving mathematical expressions. PEMDAS stands for the Priority Order: Parentheses, Exponents, Multiplication and Division (from left to right), Addition and Subtraction (from left to right). Parentheses have the highest priority, followed by Exponents, then Multiplication and Division, and lastly Addition and Subtraction. "
         f"For example: "
         f"Q. 2 + 3 * 4 "
@@ -31,17 +32,26 @@ def analyze_image(img: Image, dict_of_vars: dict):
         f"PROPERLY QUOTE THE KEYS AND VALUES IN THE DICTIONARY FOR EASIER PARSING WITH Python's ast.literal_eval."
     )
     response = model.generate_content([prompt, img])
-    print(response.text)
-    answers=[]
-    try:
-        answers = ast.literal_eval(response.text)
-    except Exception as e:
-        print(f"Error parsing response: {e}")
-    print('returned answer ', answers)
+    print("Raw response text:", response.text)
 
+    # Clean the response to remove backticks or any other unnecessary formatting
+    cleaned_response = response.text.strip('`').strip()
+
+    print("Cleaned Response:" + cleaned_response)
+
+
+    answers = []
+    try:
+        # Attempt to parse the cleaned response text
+        answers = ast.literal_eval(cleaned_response)
+    except (ValueError, SyntaxError) as e:
+        print(f"Error parsing response: {e}")
+        print("Response text likely contains invalid syntax.")
+    
+    print("Parsed answers:", answers)
+
+    # Ensure all dictionaries have the 'assign' key
     for answer in answers:
-        if 'assign' in answer:
-            answer['assign'] = True
-        else:
-            answer['assign'] = False
+        answer['assign'] = answer.get('assign', False)
+    
     return answers
