@@ -1,8 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
-import { COLORS } from '../../../constants';
-import { ColorSwatch, Group, Slider } from '@mantine/core';
+import { COLORS } from '../colors';
+import { ColorSwatch, Slider } from '@mantine/core';
 import Draggable from 'react-draggable';
 import axios from 'axios';
+import { CiEraser, CiPen } from "react-icons/ci";
+import { AiOutlineClear } from "react-icons/ai";
 
 const Home = () => {
     const canvasRef = useRef(null);
@@ -12,12 +14,12 @@ const Home = () => {
     const [result, setResult] = useState();
     const [dictOfVars, setDictOfVars] = useState({});
     const [latexExp, setLatexExp] = useState([]);
-    const [latexPos, setLatexPos] = useState({x: 10, y: 200});
-    const [lineWidth, setLineWidth] = useState(3); // State for line thickness
-    const [isErasing, setIsErasing] = useState(false); // State for eraser mode
+    const [latexPos, setLatexPos] = useState({ x: 10, y: 200 });
+    const [lineWidth, setLineWidth] = useState(3);
+    const [isErasing, setIsErasing] = useState(false);
 
-    const draggableRef = useRef(null); // Ref for draggable content
-    const ctxRef = useRef(null); // Ref for the canvas context
+    const draggableRef = useRef(null);
+    const ctxRef = useRef(null);
 
     const resetCanvas = () => {
         const canvas = canvasRef.current;
@@ -27,6 +29,7 @@ const Home = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#ecc';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawHorizontalLines();
             }
         }
     };
@@ -56,9 +59,10 @@ const Home = () => {
                 canvas.height = window.innerHeight;
                 if (ctx) {
                     ctx.lineCap = 'round';
-                    ctx.lineWidth = lineWidth; // Set initial line width
+                    ctx.lineWidth = lineWidth;
                     ctx.fillStyle = '#ecc';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    drawHorizontalLines();
                 }
             };
 
@@ -69,10 +73,9 @@ const Home = () => {
                 window.removeEventListener('resize', resizeCanvas);
             };
         }
-    }, []); // Only run once on mount to initialize the canvas
+    }, []);
 
     useEffect(() => {
-        // Dynamically load MathJax script
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
         script.async = true;
@@ -105,12 +108,34 @@ const Home = () => {
         }
     }, [latexExp]);
 
+    const drawHorizontalLines = () => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const lineHeight = 40;
+            const lineColor = '#aaa';
+            const lineWidth = 1;
+
+            for (let i = lineHeight; i < canvas.height; i += lineHeight) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.strokeStyle = lineColor;
+                ctx.lineWidth = lineWidth;
+                ctx.stroke();
+            }
+        }
+    };
+
     const startDrawing = (e) => {
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
+            const { offsetX, offsetY } = e.nativeEvent.touches ? 
+                getTouchPos(e) : 
+                e.nativeEvent;
             ctx.beginPath();
-            ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            ctx.moveTo(offsetX, offsetY);
             setIsDrawing(true);
         }
     };
@@ -124,29 +149,39 @@ const Home = () => {
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
-            ctx.strokeStyle = isErasing ? '#ecc' : color; // If erasing, draw with background color
-            ctx.lineWidth = lineWidth; // Use the selected line width
-            ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            const { offsetX, offsetY } = e.nativeEvent.touches ? 
+                getTouchPos(e) : 
+                e.nativeEvent;
+            ctx.strokeStyle = isErasing ? '#ecc' : color;
+            ctx.lineWidth = lineWidth;
+            ctx.lineTo(offsetX, offsetY);
             ctx.stroke();
         }
     };
 
+    const getTouchPos = (e) => {
+        const rect = e.target.getBoundingClientRect();
+        const touch = e.touches[0];
+        return {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top,
+        };
+    };
+
     const toggleEraser = () => {
-        setIsErasing(!isErasing); // Toggle eraser mode
+        setIsErasing(!isErasing);
     };
 
     const sendData = async () => {
         const canvas = canvasRef.current;
         if (canvas) {
-            console.log('Sending data...', `${import.meta.env.VITE_API_URL}/calculate`);
-            const response = await axios({
-                method: 'post',
-                url: `${import.meta.env.VITE_API_URL}/calculate`,
-                data: {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/calculate`,
+                {
                     image: canvas.toDataURL('image/png'),
                     dict_of_vars: dictOfVars,
-                },
-            });
+                }
+            );
 
             const resp = await response.data;
             resp.data.forEach((data) => {
@@ -193,11 +228,9 @@ const Home = () => {
     };
 
     const renderLatexToCanvas = (expression, answer) => {
-        // Add spaces explicitly in the expression and answer
-        const latex = `\\(\\mathsf{\\large{${expression.replace(/ /g, '\\,')}=${answer}}} \\mathsf{}\\)`;
-    
+        const latex =  `\\(\\mathsf{\\large{${expression.replace(/ /g, '\\,')}=${answer}}} \\mathsf{}\\)`;
         setLatexExp([...latexExp, latex]);
-    
+
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -205,30 +238,27 @@ const Home = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#ecc';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawHorizontalLines();
             }
         }
     };
 
     return (
         <>
-            <div className="z-10 flex">
-                <Group className="z-10 inline panel">
-                    <button onClick={() => setReset(true)} className="z-10 bg-slate-400">
-                        Clear
+            <div className="top-container">
+                <div className="panel">
+                    <button onClick={() => setReset(true)}>
+                        <AiOutlineClear size={35} />
                     </button>
-                    {COLORS.map((swcolor) => {
-                        return (
-                            <ColorSwatch
-                                key={swcolor}
-                                color={swcolor}
-                                onClick={() => setColor(swcolor)}
-                            />
-                        );
-                    })}
-                    <button onClick={toggleEraser} className="z-10">
-                        {isErasing ? 'Switch to Drawing' : 'Eraser'}
-                    </button>
+                    {COLORS.map((swcolor) => (
+                        <ColorSwatch
+                            key={swcolor}
+                            color={swcolor}
+                            onClick={() => setColor(swcolor)}
+                        />
+                    ))}
                     <Slider
+                        color="orange"
                         value={lineWidth}
                         onChange={setLineWidth}
                         min={1}
@@ -237,11 +267,14 @@ const Home = () => {
                         label={`Line Width: ${lineWidth}`}
                         className="z-10 slider"
                     />
-                    <button onClick={sendData} className="z-10">
-                        Calculate
+                    <button onClick={toggleEraser} className="eraser">
+                        {isErasing ? <CiPen size={40} /> : <CiEraser size={40} />}
                     </button>
-                </Group>
+                </div>
             </div>
+            <button onClick={sendData} className="go-button">
+                Go
+            </button>
             <canvas
                 ref={canvasRef}
                 id="canvas"
@@ -250,6 +283,9 @@ const Home = () => {
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
                 onMouseMove={draw}
+                onTouchStart={startDrawing}
+                onTouchEnd={stopDrawing}
+                onTouchMove={draw}
             />
             {latexExp &&
                 latexExp.map((latex, index) => (
@@ -259,7 +295,7 @@ const Home = () => {
                         defaultPosition={latexPos}
                         onStop={(e, data) => setLatexPos({ x: data.x, y: data.y })}
                     >
-                        <div ref={draggableRef} className="latex-content">
+                        <div ref={draggableRef} className="latex-content-container">
                             <div className="latex-content">{latex}</div>
                         </div>
                     </Draggable>

@@ -2,24 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-.panel{
-  position: absolute;
-  background-color: rgb(255, 255, 255);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 15px 20px;
+
+body{
+  overflow: hidden;
+}
+.top-container{
+  position: fixed;
   display: flex;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.panel{
+  background-color: rgb(255, 255, 255);
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
   gap: 10px;
   border-radius: 15px 15px;
   box-shadow: rgba(0, 0, 0, 0.084) 0px 5px 20px 5px;
-  border: 3px solid black;
+  border: 2px solid rgb(116, 116, 116);
+  cursor: pointer;
 }
 
 button{
   width: 80px;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
 }
 
-.latex-content{
+button:hover{
+  background-color: rgb(250, 171, 168);
+}
+
+
+.latex-content-container{
   position: absolute;
   top: 0%;
   transform: translate(-50%);
@@ -29,52 +48,61 @@ button{
   box-shadow: rgba(0, 0, 0, 0.084) 0px 10px 20px 5px;
   font-family: monospace;
   border-radius: 15px;
-  border: 3px solid black;
+  border: 2px solid  rgb(116, 116, 116);
+  height: 50px;
+  width: auto;
+  overflow: scroll;
 }
 .slider{
   width: 100px;
+  margin-left: 30px;
+}
+.go-button{
+  background-color: rgb(255, 255, 255);
+  position: fixed;
+  padding: 10px 20px;
+  right: 40px;
+  bottom: 40px;
+  box-shadow: rgba(0, 0, 0, 0.084) 0px 10px 20px 5px;
+  border-radius: 15px;
+  border: 2px solid  rgb(116, 116, 116);
+}
+.button{
+  display: flex;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 
-/* useEffect(() => {
-  const canvas = canvasRef.current;
-  if (canvas) {
-      const ctx = canvas.getContext('2d');
-      const resizeCanvas = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          if (ctx) {
-              ctx.lineCap = 'round';
-              ctx.lineWidth = 3;
-              ctx.fillStyle = '#ecc';
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-          }
-      };
+/* Hide scrollbar for IE, Edge and Firefox */
+*{
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
-      script.async = true;
-
-      script.onload = () => {
-          if (window.MathJax) {
-              window.MathJax.Hub.Config({
-                  tex2jax: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-              });
-              console.log('MathJax loaded and configured');
-          }
-      };
-
-      script.onerror = () => {
-          console.error('Failed to load MathJax script');
-      };
-
-      document.head.appendChild(script);
-
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-
-      return () => {
-          window.removeEventListener('resize', resizeCanvas);
-          document.head.removeChild(script);
-      };
+@media (max-width: 650px){
+  .top-container{
+    position: fixed;
+    display: flex;
+    top: 0px;
+    left: 50px;
+    transform: translateX(-50%);
+    align-items: center;
+    scale: 0.55;
   }
-}, []); */
+  .latex-content-container{
+    scale: 0.75;
+  }
+}
+
+@media (max-width: 375px){
+  .panel{
+    scale: 0.80;
+  }
+  .top-container{
+    left: 10px;
+  }
+  .latex-content-container{
+    scale: 0.5;
+  }
+}
