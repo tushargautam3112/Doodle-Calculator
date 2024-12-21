@@ -14,7 +14,7 @@ const Home = () => {
     const [result, setResult] = useState();
     const [dictOfVars, setDictOfVars] = useState({});
     const [latexExp, setLatexExp] = useState([]);
-    const [latexPos, setLatexPos] = useState({ x: 10, y: 200 });
+    const [latexPos, setLatexPos] = useState({ x: 0, y: 0 });
     const [lineWidth, setLineWidth] = useState(3);
     const [isErasing, setIsErasing] = useState(false);
 
@@ -212,10 +212,7 @@ const Home = () => {
                 }
             }
 
-            const centerX = (minX + maxX) / 2;
-            const centerY = (minY + maxY) / 2;
-
-            setLatexPos({ x: centerX, y: centerY });
+            setLatexPos({ x: 20, y: 80 });
             resp.data.forEach((data) => {
                 setTimeout(() => {
                     setResult({
