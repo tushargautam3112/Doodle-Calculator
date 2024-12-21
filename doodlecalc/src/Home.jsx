@@ -27,7 +27,7 @@ const Home = () => {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ecc';
+                ctx.fillStyle = '#ccd';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 drawHorizontalLines();
             }
@@ -60,7 +60,7 @@ const Home = () => {
                 if (ctx) {
                     ctx.lineCap = 'round';
                     ctx.lineWidth = lineWidth;
-                    ctx.fillStyle = '#ecc';
+                    ctx.fillStyle = '#ccd';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     drawHorizontalLines();
                 }
@@ -152,7 +152,7 @@ const Home = () => {
             const { offsetX, offsetY } = e.nativeEvent.touches ? 
                 getTouchPos(e) : 
                 e.nativeEvent;
-            ctx.strokeStyle = isErasing ? '#ecc' : color;
+            ctx.strokeStyle = isErasing ? '#ccd' : color;
             ctx.lineWidth = lineWidth;
             ctx.lineTo(offsetX, offsetY);
             ctx.stroke();
@@ -219,7 +219,7 @@ const Home = () => {
                         expression: data.expr,
                         answer: data.result,
                     });
-                }, 100);
+                }, 20);
             });
         }
     };
@@ -233,7 +233,7 @@ const Home = () => {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ecc';
+                ctx.fillStyle = '#ccd';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 drawHorizontalLines();
             }

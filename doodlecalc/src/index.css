@@ -34,7 +34,7 @@ button{
 }
 
 button:hover{
-  background-color: rgb(250, 171, 168);
+  background-color: rgb(168, 250, 247);
 }
 
 
@@ -92,6 +92,7 @@ button:hover{
   }
   .latex-content-container{
     scale: 0.75;
+    max-width: 120vw;
   }
 }
 
