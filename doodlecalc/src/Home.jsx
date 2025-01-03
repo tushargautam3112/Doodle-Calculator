@@ -27,7 +27,7 @@ const Home = () => {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ccd';
+                ctx.fillStyle = '#eef';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 drawHorizontalLines();
             }
@@ -60,7 +60,7 @@ const Home = () => {
                 if (ctx) {
                     ctx.lineCap = 'round';
                     ctx.lineWidth = lineWidth;
-                    ctx.fillStyle = '#ccd';
+                    ctx.fillStyle = '#eef';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     drawHorizontalLines();
                 }
@@ -113,7 +113,7 @@ const Home = () => {
         if (canvas) {
             const ctx = canvas.getContext('2d');
             const lineHeight = 40;
-            const lineColor = '#aaa';
+            const lineColor = '#bbb';
             const lineWidth = 1;
 
             for (let i = lineHeight; i < canvas.height; i += lineHeight) {
@@ -152,7 +152,7 @@ const Home = () => {
             const { offsetX, offsetY } = e.nativeEvent.touches ? 
                 getTouchPos(e) : 
                 e.nativeEvent;
-            ctx.strokeStyle = isErasing ? '#ccd' : color;
+            ctx.strokeStyle = isErasing ? '#eef' : color;
             ctx.lineWidth = lineWidth;
             ctx.lineTo(offsetX, offsetY);
             ctx.stroke();
@@ -225,15 +225,20 @@ const Home = () => {
     };
 
     const renderLatexToCanvas = (expression, answer) => {
+        if((expression + answer).length < 20 ){
         const latex =  `\\(\\mathsf{\\large{${expression.replace(/ /g, '\\,')}=${answer}}} \\mathsf{}\\)`;
         setLatexExp([...latexExp, latex]);
+        }
+        else{
+            setLatexExp([...latexExp, expression+ " = "+answer]);
+        }
 
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ccd';
+                ctx.fillStyle = '#eef';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 drawHorizontalLines();
             }

@@ -49,7 +49,6 @@ button:hover{
   font-family: monospace;
   border-radius: 15px;
   border: 2px solid  rgb(116, 116, 116);
-  height: 50px;
   width: auto;
   overflow: scroll;
 }
